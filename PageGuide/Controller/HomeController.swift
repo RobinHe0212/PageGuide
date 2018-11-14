@@ -8,7 +8,23 @@
 
 import LBTAComponents
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout  {
+
+    lazy var collectionView : UICollectionView = {
+        
+        let layout = UICollectionViewFlowLayout()
+                layout.scrollDirection = .horizontal
+                layout.minimumLineSpacing = 0
+                let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+       
+                cv.backgroundColor = .white
+                cv.dataSource = self
+                cv.delegate = self
+                cv.isPagingEnabled = true
+                return cv
+        
+    }()
+    
 
     
     let pages : [PageModel] = {
@@ -20,7 +36,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }()
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-        collectionViewLayout.invalidateLayout()
+     collectionView.collectionViewLayout.invalidateLayout()
+        
+        let indexPath = IndexPath(item: pc.currentPage, section: 0)
+        DispatchQueue.main.async {
+            self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        }
     }
     
     
@@ -86,7 +107,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }, completion: nil)
     }
     
-    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let pageNumber = targetContentOffset.pointee.x/view.frame.width
         pc.currentPage = Int(pageNumber)
         if pc.currentPage == pages.count {
@@ -108,12 +129,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        observeKeyBoardNotification()
+        //Tap screen to observe
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(keyBoardEnd))
+        collectionView.addGestureRecognizer(tapGesture)
         
         collectionView.backgroundColor = .white
-        collectionView.register(PageCell.self, forCellWithReuseIdentifier: "cellId")
-        collectionView.register(LoginCell.self, forCellWithReuseIdentifier: "loginId")
-        collectionView.isPagingEnabled = true
+        
         view.addSubview(collectionView)
         view.addSubview(pc)
         view.addSubview(skipButton)
@@ -128,12 +150,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
        
           collectionView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-
+        
+        collectionView.register(PageCell.self, forCellWithReuseIdentifier: "cellId")
+        collectionView.register(LoginCell.self, forCellWithReuseIdentifier: "loginId")
+        collectionView.isPagingEnabled = true
        
-        //Tap screen to observe
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(keyBoardEnd))
-        collectionView.addGestureRecognizer(tapGesture)
-         observeKeyBoardNotification()
+       
     }
     
      func observeKeyBoardNotification(){
@@ -146,7 +168,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     @objc func keyBoardAppear(){
         
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-            self.view.frame = CGRect(x: 0, y: -5, width: self.view.frame.width, height: self.view.frame.height)
+            self.view.frame = CGRect(x: 0, y: -110, width: self.view.frame.width, height: self.view.frame.height)
         }, completion: nil)
         
     }
@@ -154,25 +176,25 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     @objc func keyBoardEnd(){
         
         view.endEditing(true)
+        
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         }, completion: nil)
         
-        
     }
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         view.endEditing(true)
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         }, completion: nil)
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pages.count+1
     }
     
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if indexPath.item == pages.count {
             let loginCell = collectionView.dequeueReusableCell(withReuseIdentifier: "loginId", for: indexPath)

@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         layout.minimumLineSpacing = 0
         layout.scrollDirection = .horizontal
         
-        let homeController = HomeController(collectionViewLayout :layout)
+        let homeController = HomeController()
         
         window?.rootViewController = homeController
             

@@ -59,7 +59,7 @@ class LoginCell : UICollectionViewCell {
         return password
         
     }()
-    let buttonView : UIButton = {
+    lazy var buttonView : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Login", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
@@ -77,9 +77,11 @@ class LoginCell : UICollectionViewCell {
         addSubview(addressText)
         addSubview(pwText)
         addSubview(buttonView)
-        imageView.anchor(topAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 80, leftConstant: 150, bottomConstant: 0, rightConstant: 0, widthConstant: 80, heightConstant: 60)
-        nikeText.anchor(imageView.bottomAnchor, left: leftAnchor, bottom: nil, right: nil, topConstant: 10, leftConstant: 90, bottomConstant: 0, rightConstant: 0, widthConstant: 280, heightConstant: 150)
-        addressText.anchor(nikeText.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: -20, leftConstant: 32, bottomConstant: 0, rightConstant: 32, widthConstant: 0, heightConstant: 50)
+        imageView.anchor(centerYAnchor, left: nil, bottom: nil, right: nil, topConstant: -230, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 80, heightConstant: 60)
+        imageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+       nikeText.anchor(imageView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 25, leftConstant: 32, bottomConstant: 0, rightConstant: 32, widthConstant: 0, heightConstant: 150)
+        addressText.anchor(nikeText.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: -60, leftConstant: 32, bottomConstant: 0, rightConstant: 32, widthConstant: 0, heightConstant: 50)
         pwText.anchor(addressText.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 20, leftConstant: 32, bottomConstant: 0, rightConstant: 32, widthConstant: 0, heightConstant: 50)
         buttonView.anchor(pwText.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 20, leftConstant: 32, bottomConstant: 0, rightConstant: 32, widthConstant: 0, heightConstant: 50)
     }
